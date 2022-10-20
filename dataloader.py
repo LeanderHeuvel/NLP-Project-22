@@ -15,20 +15,23 @@ class DataLoader:
     '''
     Load data in python list and lazy load the headlines and labels in seperate list. 
     '''
-    def __init__(self, img_dir:str ) -> None:
+    def __init__(self, img_dir:str, portion=0.4 ) -> None:
         self.img_dir = img_dir
+        self.portion = portion
         self.data = []
-        self.__load_data__()
         self.headlines = None
         self.labels = None
         self.index = 0 
+        self.__load_data__()
     '''
     For internal use only, loads the data after instance initialization in Python list
     '''
     def __load_data__(self):
         with open(self.img_dir) as file:
-            for line in file.readlines():
-                self.data.append(json.loads(line))
+            for idx, line in enumerate(file.readlines()):
+                if idx < 28618 * self.portion:
+                    self.data.append(json.loads(line))
+
     def __len__(self):
         return len(self.data)
     '''
