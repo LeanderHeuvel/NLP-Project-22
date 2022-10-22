@@ -13,28 +13,14 @@ import matplotlib.pyplot as plt
 tf.get_logger().setLevel('ERROR')
 
 
-
-
 class BertModel(GenericModelInterface):
 
     def __init__(self, model_name = 'small_bert/bert_en_uncased_L-4_H-512_A-8', epochs = 5, dataloader=None):
         self.dataloader = dataloader
-        self.X_train, self.y_train = self.dataloader.get_training_data()
-        self.X_test, self.y_test = self.dataloader.get_test_data()
         self.bert_model_name = model_name
         encoder_url, preprocess_url =  self.get_model_urls(model_name)
         self.model = self.build_model(encoder_url, preprocess_url)
-        self.X_train = np.array(self.X_train)
-        self.y_train = np.array(self.y_train)
-        self.X_test = np.array(self.X_test)
-        self.y_test = np.array(self.y_test)
-
-        # self.X_train = tf.data.Dataset.from_tensor_slices(self.X_train)
-        # self.y_train = tf.data.Dataset.from_tensor_slices(self.y_train)
-        # self.X_test = tf.data.Dataset.from_tensor_slices(self.X_test)
-        # self.y_test = tf.data.Dataset.from_tensor_slices(self.y_test)
         self.epochs = epochs
-
 
     def build_model(self, encoder_url, preprocess_url):
         text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
@@ -62,6 +48,10 @@ class BertModel(GenericModelInterface):
         return self.model(tf.constant(corpus))
     
     def train(self):
+        X_train, y_train = self.dataloader.get_training_data()
+        X_train = np.array(X_train)
+        y_train = np.array(y_train)
+
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
         steps_per_epoch = self.X_train.size
@@ -76,11 +66,12 @@ class BertModel(GenericModelInterface):
         self.model.compile(optimizer=optimizer,
                          loss=loss,
                          metrics=metrics)
-        history = self.model.fit(self.X_train, self.y_train,
+        history = self.model.fit(X_train, y_train,
                                epochs=self.epochs)
         
     def evaluate(self):
-        return self.model.evaluate(self.X_test, self.y_test)
+        X_test, y_test = self.dataloader.get_test_data()
+        return self.model.evaluate(np.array(X_test), np.array(y_test))
     
     def get_model_urls(self, bert_model_name):
         map_name_to_handle = {
