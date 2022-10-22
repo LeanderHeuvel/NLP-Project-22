@@ -31,5 +31,6 @@ if args.action =="train":
         model.plot_model()
 else:
     print("Evaluating... ")
+    model.load_model(args.model_dir)
     print(model.evaluate())
     
