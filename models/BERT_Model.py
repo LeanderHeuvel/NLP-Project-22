@@ -32,8 +32,10 @@ class BertModel(GenericModelInterface):
 
     def plot_model(self):
         tf.keras.utils.plot_model(self.model)
-
     def load_model(self, model_dir):
+        return super().load_model(model_dir)
+
+    def load_model_eval(self, model_dir):
         print("loading model")
         self.model = self.build_model(model_dir, self.preprocess_url)
         print("model loaded")
