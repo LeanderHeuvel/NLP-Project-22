@@ -55,7 +55,7 @@ class BertModel(GenericModelInterface):
 
     def store_model(self, model_dir):
         dataset_name = 'sarcastism_ds'
-        saved_model_path = './{}_bert'.format(dataset_name.replace('/', '_'))
+        saved_model_path = './'+model_dir+'{}_bert'.format(dataset_name.replace('/', '_'))
         self.model.save(saved_model_path, include_optimizer=False)
 
     def predict(self, corpus):
