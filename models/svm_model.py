@@ -28,7 +28,7 @@ class SVM_Text_Model(GenericModelInterface):
             self.vocabulary = self.countVectorizer.get_feature_names_out()
         return self.countVectorizer.transform(X)
 
-    def fit_model(self):
+    def train(self):
         self.model.fit(self.vectorized_corpus,self.y_train)
     
     def get_model(self):
