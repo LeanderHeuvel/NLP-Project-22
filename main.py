@@ -14,7 +14,7 @@ parser.add_argument('--epochs', default=50, type=int, help="amount of epochs for
 args = parser.parse_args()
 model = None
 
-sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json", train_size = 0.6)
+sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json")
 epochs = args.epochs
 
 if args.model_type == "bert":
