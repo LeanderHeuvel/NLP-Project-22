@@ -15,8 +15,8 @@ class BertModel(GenericModelInterface):
     def __init__(self, model_name = 'small_bert/bert_en_uncased_L-4_H-512_A-8', epochs = 5, dataloader=None):
         self.dataloader = dataloader
         self.bert_model_name = model_name
-        encoder_url, preprocess_url =  self.get_model_urls(model_name)
-        self.model = self.build_model(encoder_url, preprocess_url)
+        self.encoder_url, self.preprocess_url =  self.get_model_urls(model_name)
+        self.model = self.build_model(self.encoder_url, self.preprocess_url)
         self.epochs = epochs
 
     def build_model(self, encoder_url, preprocess_url):
@@ -34,7 +34,7 @@ class BertModel(GenericModelInterface):
         tf.keras.utils.plot_model(self.model)
 
     def load_model(self, model_dir):
-        self.model = tf.saved_model.load(model_dir)
+        self.build_model(model_dir, self.preprocess_url)
         # loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         # steps_per_epoch = self.X_train.size
         # num_train_steps = steps_per_epoch * self.epochs
