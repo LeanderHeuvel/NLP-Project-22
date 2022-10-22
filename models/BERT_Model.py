@@ -34,7 +34,7 @@ class BertModel(GenericModelInterface):
         tf.keras.utils.plot_model(self.model)
 
     def load_model(self, model_dir):
-        self.build_model(model_dir, self.preprocess_url)
+        self.model = self.build_model(model_dir, self.preprocess_url)
         # loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         # steps_per_epoch = self.X_train.size
         # num_train_steps = steps_per_epoch * self.epochs
