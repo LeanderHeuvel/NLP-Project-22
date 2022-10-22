@@ -35,17 +35,17 @@ class BertModel(GenericModelInterface):
 
     def load_model(self, model_dir):
         self.model = tf.saved_model.load(model_dir)
-        loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
-        steps_per_epoch = self.X_train.size
-        num_train_steps = steps_per_epoch * self.epochs
-        num_warmup_steps = int(0.1*num_train_steps)
+        # loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        # steps_per_epoch = self.X_train.size
+        # num_train_steps = steps_per_epoch * self.epochs
+        # num_warmup_steps = int(0.1*num_train_steps)
 
-        init_lr = 3e-5
-        optimizer = optimization.create_optimizer(init_lr=init_lr,
-                                                num_train_steps=num_train_steps,
-                                                num_warmup_steps=num_warmup_steps,
-                                                optimizer_type='adamw')
-        self.model.compile(loss=loss, optimizer=optimizer)
+        # init_lr = 3e-5
+        # optimizer = optimization.create_optimizer(init_lr=init_lr,
+        #                                         num_train_steps=num_train_steps,
+        #                                         num_warmup_steps=num_warmup_steps,
+        #                                         optimizer_type='adamw')
+        # self.model.compile(loss=loss, optimizer=optimizer)
 
     def store_model(self, model_dir):
         dataset_name = 'sarcastism_ds'
