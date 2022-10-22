@@ -5,7 +5,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import tensorflow_text as text
 from official.nlp import optimization  # to create AdamW optimizer
-from models.Generic_Model import GenericModelInterface
+from models.generic_model import GenericModelInterface
 
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,17 +1,39 @@
-from sklearn import svm
-import dataloader
-from models import SVM_classifier
-from models import BERT_Model
+from email.policy import default
+from numpy import int32
 
+from yaml import parse
+import dataloader
+from models import svm_model
+from models import bert_model
+import argparse
+
+parser = argparse.ArgumentParser(description='train or evaluate a model')
+
+parser.add_argument('--model_type', default = "bert", help = "choose between svm or bert", type=str)
+parser.add_argument('--action', default = "train", help = "train or evaluate", type=str)
+parser.add_argument('--model_dir', default = "checkpoints/sarcastism_ds_bert", help = "directory of model to store or load", type=str)
+parser.add_argument('--epochs', default=50, type=int, help="amount of epochs for training")
+
+
+args = parser.parse_args()
+model = None
 
 sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json", train_size = 0.6)
-# svm_model = SVM_classifier.SVM_Text_Model(sarcastic_loader)
-# svm_model.load_model("filename.joblib")
-bert_model = BERT_Model.BertModel(dataloader = sarcastic_loader, epochs = 1)
+epochs = args.epochs
 
-print("training...")
-bert_model.train()
-print("storing model")
-bert_model.store_model("checkpoints/")
-print("evaluating...")
-print(bert_model.evaluate())
+if args.model_type == "bert":
+    model = bert_model.BertModel(dataloader = sarcastic_loader, epochs = epochs)
+else:
+    model = SVM_classifier.SVM_Text_Model(sarcastic_loader)
+
+if args.action =="train":
+    print("training...")
+    model.train()
+    print("storing model to: "+ args.model_dir)
+    model.store_model(args.model_dir)
+    if args.model_type == "bert":
+        model.plot_model()
+else:
+    print("Evaluating... ")
+    print(model.evaluate())
+    

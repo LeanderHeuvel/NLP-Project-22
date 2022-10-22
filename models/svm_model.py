@@ -3,7 +3,7 @@ from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
 
 from dataloader import DataLoader
-from models.Generic_Model import GenericModelInterface
+from models.generic_model import GenericModelInterface
 
 from joblib import dump, load
 
