@@ -1,7 +1,3 @@
-from email.policy import default
-from numpy import int32
-
-from yaml import parse
 import dataloader
 from models import svm_model
 from models import bert_model
@@ -24,7 +20,7 @@ epochs = args.epochs
 if args.model_type == "bert":
     model = bert_model.BertModel(dataloader = sarcastic_loader, epochs = epochs)
 else:
-    model = SVM_classifier.SVM_Text_Model(sarcastic_loader)
+    model = svm_model.SVM_Text_Model(sarcastic_loader)
 
 if args.action =="train":
     print("training...")
