@@ -50,11 +50,13 @@ class BertModel(GenericModelInterface):
     def plot_model(self):
         tf.keras.utils.plot_model(self.model)
 
-    def load_model(self):
-        pass
+    def load_model(self, model_dir):
+        self.model = tf.saved_model.load(model_dir)
 
     def store_model(self, model_dir):
-        return super().store_model(model_dir)
+        dataset_name = 'sarcastism_ds'
+        saved_model_path = './{}_bert'.format(dataset_name.replace('/', '_'))
+        self.model.save(saved_model_path, include_optimizer=False)
 
     def predict(self, corpus):
         return self.model(tf.constant(corpus))
