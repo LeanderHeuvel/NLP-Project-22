@@ -32,5 +32,5 @@ if args.action =="train":
 else:
     print("Evaluating... ")
     model.load_model(args.model_dir)
-    print(model.evaluate())
+print(model.evaluate())
     
