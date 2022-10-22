@@ -16,19 +16,22 @@ class DataLoader:
     '''
     Load data in python list and lazy load the headlines and labels in seperate list. 
     '''
-    def __init__(self, img_dir:str, train_size=0.6, train_test_split=True ) -> None:
+    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True ) -> None:
         self.img_dir = img_dir
         self.data = []
         self.headlines = None
         self.labels = None
         self.index = 0 
         self.random_state = 9283
-        self.train_size = train_size
+        self.train_test_val = train_test_val
         if train_test_split:
             self.train = []
             self.test = []
+            self.val = []
             self.X_train = []
             self.X_test = []
+            self.X_val = []
+            self.y_val = []
             self.y_train = []
             self.y_test = []
         self.__load_data__()
@@ -54,18 +57,21 @@ class DataLoader:
             return headline, is_sarcastic
         else:
             raise IndexError
-    '''
-    This method loads the headlines only. The headlines are cached in the instance. Can be useful for a countvectorizer for example.
-    '''
+ 
     def __split_data__(self, split):
         if split:
-            data = train_test_split(self.data,random_state = self.random_state, train_size=self.train_size)
-            self.train = data[0]
+            data = train_test_split(self.data,random_state = self.random_state, train_size=self.train_test_val[0])
             self.test = data[1]
+            data = train_test_split(data[0],random_state = self.random_state, train_size=self.train_test_val[2])
+            self.train = data[0]
+            self.val = data[1]
+            
         else:
             self.train = self.data
             self.test = self.data
-
+    '''
+    This method loads the headlines only. The headlines are cached in the instance. Can be useful for a countvectorizer for example.
+    '''
     def get_training_data(self):   
         if self.X_train == []:
             self.X_train = [element['headline'] for element in self.train]
@@ -80,6 +86,12 @@ class DataLoader:
             self.y_test = [element['is_sarcastic'] for element in self.test]
             self.X_test = [element['headline'] for element in self.test]
         return self.X_test, self.y_test
+
+    def get_val_data(self):
+        if self.X_test == []:
+            self.y_val = [element['is_sarcastic'] for element in self.val]
+            self.X_val = [element['headline'] for element in self.val]
+        return self.X_val, self.y_val
     
     '''
     Iterable implementation.
