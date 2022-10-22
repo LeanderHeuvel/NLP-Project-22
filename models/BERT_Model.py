@@ -47,6 +47,7 @@ class BertModel(GenericModelInterface):
                                                 optimizer_type='adamw')
         self.model.compile(loss=loss, optimizer=optimizer)
         print(type(self.model))
+        print(self.evaluate())
 
     def store_model(self, model_dir):
         dataset_name = 'sarcastism_ds'
