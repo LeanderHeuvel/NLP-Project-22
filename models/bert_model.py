@@ -56,6 +56,20 @@ class BertModel(GenericModelInterface):
             #                                         optimizer_type='adamw')
             # self.model.compile(loss=loss, optimizer=optimizer)
             # print(type(self.model))
+            loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+            metrics = tf.metrics.BinaryAccuracy() 
+            steps_per_epoch = self.X_train.size
+            num_train_steps = steps_per_epoch * self.epochs
+            num_warmup_steps = int(0.1*num_train_steps)
+
+            init_lr = 3e-5
+            optimizer = optimization.create_optimizer(init_lr=init_lr,
+                                                    num_train_steps=num_train_steps,
+                                                    num_warmup_steps=num_warmup_steps,
+                                                    optimizer_type='adamw')
+            self.model.compile(optimizer=optimizer,
+                            loss=loss,
+                            metrics=metrics)
             print(self.evaluate())
 
     def store_model(self, model_dir):
