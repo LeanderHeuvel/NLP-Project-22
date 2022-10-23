@@ -36,22 +36,23 @@ class BertModel(GenericModelInterface):
         return super().load_model(model_dir)
 
     def load_model_eval(self, model_dir):
-        print("loading model")
-        self.model = self.build_model(model_dir, self.preprocess_url)
-        print("model loaded")
-        loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
-        steps_per_epoch = self.X_train.size
-        num_train_steps = steps_per_epoch * self.epochs
-        num_warmup_steps = int(0.1*num_train_steps)
+        with tf.device('/physical_device:GPU:1'):
+            print("loading model")
+            self.model = self.build_model(model_dir, self.preprocess_url)
+            print("model loaded")
+            loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+            steps_per_epoch = self.X_train.size
+            num_train_steps = steps_per_epoch * self.epochs
+            num_warmup_steps = int(0.1*num_train_steps)
 
-        init_lr = 3e-5
-        optimizer = optimization.create_optimizer(init_lr=init_lr,
-                                                num_train_steps=num_train_steps,
-                                                num_warmup_steps=num_warmup_steps,
-                                                optimizer_type='adamw')
-        self.model.compile(loss=loss, optimizer=optimizer)
-        print(type(self.model))
-        print(self.evaluate())
+            init_lr = 3e-5
+            optimizer = optimization.create_optimizer(init_lr=init_lr,
+                                                    num_train_steps=num_train_steps,
+                                                    num_warmup_steps=num_warmup_steps,
+                                                    optimizer_type='adamw')
+            self.model.compile(loss=loss, optimizer=optimizer)
+            print(type(self.model))
+            print(self.evaluate())
 
     def store_model(self, model_dir):
         dataset_name = 'sarcastism_ds'
