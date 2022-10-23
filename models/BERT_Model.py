@@ -20,7 +20,7 @@ class BertModel(GenericModelInterface):
         self.epochs = epochs
 
     def build_model(self, encoder_url, preprocess_url):
-        with tf.device('/physical_device:GPU:1'):
+        with tf.device('/device:GPU:1'):
             text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
             preprocessing_layer = hub.KerasLayer(preprocess_url, name='preprocessing')
             encoder_inputs = preprocessing_layer(text_input)
@@ -33,11 +33,12 @@ class BertModel(GenericModelInterface):
 
     def plot_model(self):
         tf.keras.utils.plot_model(self.model)
+        
     def load_model(self, model_dir):
         return super().load_model(model_dir)
 
     def load_model_eval(self, model_dir):
-        with tf.device('/physical_device:GPU:1'):
+        with tf.device('/device:GPU:1'):
             print("loading model")
             self.model = self.build_model(model_dir, self.preprocess_url)
             print("model loaded")
