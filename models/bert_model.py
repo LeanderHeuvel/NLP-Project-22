@@ -35,7 +35,8 @@ class BertModel(GenericModelInterface):
         tf.keras.utils.plot_model(self.model)
 
     def load_model(self, model_dir):
-        self.model = tf.keras.models.load_model(model_dir)
+        with tf.device('/device:GPU:1'):
+            self.model = tf.keras.models.load_model(model_dir)
         # return super().load_model(model_dir)
 
     def load_model_eval(self, model_dir):
@@ -87,7 +88,7 @@ class BertModel(GenericModelInterface):
 
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
-        steps_per_epoch = self.X_train.size
+        steps_per_epoch = X_train.size
         num_train_steps = steps_per_epoch * self.epochs
         num_warmup_steps = int(0.1*num_train_steps)
 
@@ -104,6 +105,20 @@ class BertModel(GenericModelInterface):
         
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
+        loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        metrics = tf.metrics.BinaryAccuracy() 
+        steps_per_epoch = X_test.size
+        num_train_steps = steps_per_epoch * self.epochs
+        num_warmup_steps = int(0.1*num_train_steps)
+
+        init_lr = 3e-5
+        optimizer = optimization.create_optimizer(init_lr=init_lr,
+                                                num_train_steps=num_train_steps,
+                                                num_warmup_steps=num_warmup_steps,
+                                                optimizer_type='adamw')
+        self.model.compile(optimizer=optimizer,
+                        loss=loss,
+                        metrics=metrics)
         return self.model.evaluate(np.array(X_test), np.array(y_test))
     
     def get_model_urls(self, bert_model_name):
