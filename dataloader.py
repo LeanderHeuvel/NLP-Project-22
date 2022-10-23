@@ -1,5 +1,6 @@
 import json
 from sklearn.model_selection import train_test_split
+import numpy as np
 '''
 Dataloader of Sarcastic dataset
 
@@ -76,7 +77,7 @@ class DataLoader:
         if self.X_train == []:
             self.X_train = [element['headline'] for element in self.train]
             self.y_train = [element['is_sarcastic'] for element in self.train]
-        return self.X_train, self.y_train
+        return np.array(self.X_train), np.array(self.y_train)
 
     '''
     This method loads the labels, sarcastic yes/no only. The labels are cached in the instance.
@@ -85,13 +86,13 @@ class DataLoader:
         if self.X_test == []:
             self.y_test = [element['is_sarcastic'] for element in self.test]
             self.X_test = [element['headline'] for element in self.test]
-        return self.X_test, self.y_test
+        return np.array(self.X_test), np.array(self.y_test)
 
     def get_val_data(self):
         if self.X_test == []:
             self.y_val = [element['is_sarcastic'] for element in self.val]
             self.X_val = [element['headline'] for element in self.val]
-        return self.X_val, self.y_val
+        return np.array(self.X_val), np.array(self.y_val)
     
     '''
     Iterable implementation.

@@ -1,7 +1,8 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 import tensorflow_text as text
-from official.nlp import optimization  # to create AdamW optimizer
+from official.nlp import optimization
+from dataloader import DataLoader  # to create AdamW optimizer
 from models.generic_model import GenericModelInterface
 
 import numpy as np
@@ -13,11 +14,12 @@ tf.get_logger().setLevel('ERROR')
 class BertModel(GenericModelInterface):
 
     def __init__(self, model_name = 'small_bert/bert_en_uncased_L-4_H-512_A-8', epochs = 5, dataloader=None):
-        self.dataloader = dataloader
+        self.dataloader:DataLoader = dataloader
         self.bert_model_name = model_name
         self.encoder_url, self.preprocess_url =  self.get_model_urls(model_name)
         self.model = self.build_model(self.encoder_url, self.preprocess_url)
         self.epochs = epochs
+        self.history = None
 
     def build_model(self, encoder_url, preprocess_url):
         with tf.device('/device:GPU:1'):
@@ -37,41 +39,6 @@ class BertModel(GenericModelInterface):
     def load_model(self, model_dir):
         with tf.device('/device:GPU:1'):
             self.model = tf.keras.models.load_model(model_dir)
-        # return super().load_model(model_dir)
-
-    def load_model_eval(self, model_dir):
-        with tf.device('/device:GPU:1'):
-            self.model = tf.keras.models.load_model(model_dir)
-            # print("loading model")
-            # self.model = self.build_model(model_dir, self.preprocess_url)
-            # print("model loaded")
-            # loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
-            # steps_per_epoch = self.X_train.size
-            # num_train_steps = steps_per_epoch * self.epochs
-            # num_warmup_steps = int(0.1*num_train_steps)
-
-            # init_lr = 3e-5
-            # optimizer = optimization.create_optimizer(init_lr=init_lr,
-            #                                         num_train_steps=num_train_steps,
-            #                                         num_warmup_steps=num_warmup_steps,
-            #                                         optimizer_type='adamw')
-            # self.model.compile(loss=loss, optimizer=optimizer)
-            # print(type(self.model))
-            loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
-            metrics = tf.metrics.BinaryAccuracy() 
-            steps_per_epoch = self.X_train.size
-            num_train_steps = steps_per_epoch * self.epochs
-            num_warmup_steps = int(0.1*num_train_steps)
-
-            init_lr = 3e-5
-            optimizer = optimization.create_optimizer(init_lr=init_lr,
-                                                    num_train_steps=num_train_steps,
-                                                    num_warmup_steps=num_warmup_steps,
-                                                    optimizer_type='adamw')
-            self.model.compile(optimizer=optimizer,
-                            loss=loss,
-                            metrics=metrics)
-            print(self.evaluate())
 
     def store_model(self, model_dir):
         dataset_name = 'sarcastism_ds'
@@ -83,9 +50,7 @@ class BertModel(GenericModelInterface):
     
     def train(self):
         X_train, y_train = self.dataloader.get_training_data()
-        X_train = np.array(X_train)
-        y_train = np.array(y_train)
-
+        X_val, y_val = self.dataloader.get_val_data()
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
         steps_per_epoch = X_train.size
@@ -100,13 +65,11 @@ class BertModel(GenericModelInterface):
         self.model.compile(optimizer=optimizer,
                          loss=loss,
                          metrics=metrics)
-        history = self.model.fit(X_train, y_train,
+        self.history = self.model.fit(X_train, y_train, validation_data = (X_val, y_val),
                                epochs=self.epochs)
         
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
-        X_test = np.array(X_test)
-        y_test = np.array(y_test)
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
         steps_per_epoch = X_test.size
@@ -121,7 +84,7 @@ class BertModel(GenericModelInterface):
         self.model.compile(optimizer=optimizer,
                         loss=loss,
                         metrics=metrics)
-        return self.model.evaluate(np.array(X_test), np.array(y_test))
+        return self.model.evaluate(X_test, y_test)
     
     def get_model_urls(self, bert_model_name):
         map_name_to_handle = {
