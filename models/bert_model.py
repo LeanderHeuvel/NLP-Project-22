@@ -105,6 +105,8 @@ class BertModel(GenericModelInterface):
         
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
+        X_test = np.array(X_test)
+        y_test = np.array(y_test)
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
         steps_per_epoch = X_test.size
