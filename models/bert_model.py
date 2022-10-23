@@ -41,7 +41,7 @@ class BertModel(GenericModelInterface):
             self.model = tf.keras.models.load_model(model_dir)
 
     def store_model(self, model_dir):
-        dataset_name = 'sarcastism_ds'
+        dataset_name = 'sarcasm_ds2'
         saved_model_path = './'+model_dir+'{}_bert'.format(dataset_name.replace('/', '_'))
         self.model.save(saved_model_path, include_optimizer=False)
 
@@ -51,11 +51,13 @@ class BertModel(GenericModelInterface):
     def train(self):
         X_train, y_train = self.dataloader.get_training_data()
         X_val, y_val = self.dataloader.get_val_data()
+
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         metrics = tf.metrics.BinaryAccuracy() 
         steps_per_epoch = X_train.size
         num_train_steps = steps_per_epoch * self.epochs
         num_warmup_steps = int(0.1*num_train_steps)
+        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 
         init_lr = 3e-5
         optimizer = optimization.create_optimizer(init_lr=init_lr,
@@ -65,8 +67,9 @@ class BertModel(GenericModelInterface):
         self.model.compile(optimizer=optimizer,
                          loss=loss,
                          metrics=metrics)
-        self.history = self.model.fit(X_train, y_train, validation_data = (X_val, y_val),
-                               epochs=self.epochs)
+
+        self.history = self.model.fit(X_train, y_train, validation_data = (X_val, y_val), 
+            epochs=self.epochs, callbacks = [callback])
         
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
