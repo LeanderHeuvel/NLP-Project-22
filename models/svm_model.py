@@ -9,7 +9,7 @@ from joblib import dump, load
 
 class SVM_Text_Model(GenericModelInterface):
     
-    def __init__(self, dataloader, pretrained_model = None, vocabulary=None) -> None:
+    def __init__(self, dataloader, pretrained_model = None, vocabulary=None, n_gram_range:tuple = (1,1)) -> None:
         self.dataloader:DataLoader = dataloader
         if pretrained_model is None:
             self.model = svm.SVC()
@@ -18,12 +18,13 @@ class SVM_Text_Model(GenericModelInterface):
         self.vocabulary = vocabulary
         self.X_train, self.y_train = self.dataloader.get_training_data()
         self.countVectorizer = None
+        self.n_gram_range = n_gram_range
         if self.vocabulary is None:
             self.vectorize(self.X_train)
         
     def vectorize(self, X):
         if self.countVectorizer is None:
-            self.countVectorizer = CountVectorizer()
+            self.countVectorizer = CountVectorizer(ngram_range = self.n_gram_range)
             self.vectorized_corpus = self.countVectorizer.fit_transform(self.X_train)
             self.vocabulary = self.countVectorizer.get_feature_names_out()
         return self.countVectorizer.transform(X)
