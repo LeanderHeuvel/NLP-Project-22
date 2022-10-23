@@ -18,7 +18,7 @@ class SVM_Text_Model(GenericModelInterface):
         self.vocabulary = vocabulary
         self.X_train, self.y_train = self.dataloader.get_training_data()
         self.countVectorizer = None
-        self.n_gram_range = n_gram_range
+        self.n_gram_range = tuple(n_gram_range)
         if self.vocabulary is None:
             self.vectorize(self.X_train)
         
