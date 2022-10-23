@@ -1,11 +1,10 @@
 import tensorflow as tf
 import tensorflow_hub as hub
-import tensorflow_text as text
+
 from official.nlp import optimization
 from dataloader import DataLoader  # to create AdamW optimizer
 from models.generic_model import GenericModelInterface
 
-import numpy as np
 import matplotlib.pyplot as plt
 
 tf.get_logger().setLevel('ERROR')
@@ -62,7 +61,8 @@ class BertModel(GenericModelInterface):
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend(loc='lower right')
-        
+        plt.savefig('checkpoints/training_curve.png')
+
     def plot_model(self):
         tf.keras.utils.plot_model(self.model)
 

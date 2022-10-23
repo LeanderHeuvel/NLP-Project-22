@@ -29,6 +29,7 @@ if args.action =="train":
     model.store_model(args.model_dir)
     if args.model_type == "bert":
         model.plot_model()
+        model.plot_training_curve()
 else:
     print("Evaluating... ")
     model.load_model(args.model_dir)
