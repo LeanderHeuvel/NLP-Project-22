@@ -20,15 +20,16 @@ class BertModel(GenericModelInterface):
         self.epochs = epochs
 
     def build_model(self, encoder_url, preprocess_url):
-        text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
-        preprocessing_layer = hub.KerasLayer(preprocess_url, name='preprocessing')
-        encoder_inputs = preprocessing_layer(text_input)
-        encoder = hub.KerasLayer(encoder_url, trainable=True, name='BERT_encoder')
-        outputs = encoder(encoder_inputs)
-        net = outputs['pooled_output']
-        net = tf.keras.layers.Dropout(0.1)(net)
-        net = tf.keras.layers.Dense(1, activation=None, name='classifier')(net)
-        return tf.keras.Model(text_input, net)
+        with tf.device('/physical_device:GPU:1'):
+            text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
+            preprocessing_layer = hub.KerasLayer(preprocess_url, name='preprocessing')
+            encoder_inputs = preprocessing_layer(text_input)
+            encoder = hub.KerasLayer(encoder_url, trainable=True, name='BERT_encoder')
+            outputs = encoder(encoder_inputs)
+            net = outputs['pooled_output']
+            net = tf.keras.layers.Dropout(0.1)(net)
+            net = tf.keras.layers.Dense(1, activation=None, name='classifier')(net)
+            return tf.keras.Model(text_input, net)
 
     def plot_model(self):
         tf.keras.utils.plot_model(self.model)
