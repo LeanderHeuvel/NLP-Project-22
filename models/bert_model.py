@@ -1,6 +1,6 @@
 import tensorflow as tf
 import tensorflow_hub as hub
-
+import numpy as np
 
 from sklearn.metrics import f1_score, auc, precision_score, recall_score
 
