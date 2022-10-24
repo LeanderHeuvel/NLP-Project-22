@@ -17,7 +17,7 @@ class DataLoader:
     '''
     Load data in python list and lazy load the headlines and labels in seperate list. 
     '''
-    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True, use_headlines = True, use_body = False ) -> None:
+    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True, use_headlines = 1, use_body = 0 ) -> None:
         self.img_dir = img_dir
         self.data = []
         self.headlines = None
@@ -42,23 +42,21 @@ class DataLoader:
     '''
     For internal use only, loads the data after instance initialization in Python list
     '''
-    def __load_data__(self, use_body):
-        use_body = True
+    def __load_data__(self):
         with open(self.img_dir) as file:
-            if use_body:
-                json_str = ""
-                i = 0
-                for l in file.readlines():
-                    i+=1
-                    if i<6:
-                        json_str += l
-                    if i == 6:
-                        self.data.append(json.loads(json_str+"}"))
-                        json_str = ""
-                        i=0
-            else:
-                for idx, line in enumerate(file.readlines()):
-                    self.data.append(json.loads(line))
+            json_str = ""
+            i = 0
+            for l in file.readlines():
+                i+=1
+                if i<6:
+                    json_str += l
+                if i == 6:
+                    self.data.append(json.loads(json_str+"}"))
+                    json_str = ""
+                    i=0
+            # else:
+            #     for idx, line in enumerate(file.readlines()):
+            #         self.data.append(json.loads(line))
 
     def __len__(self):
         return len(self.data)
@@ -89,15 +87,15 @@ class DataLoader:
     This method loads the headlines only. The headlines are cached in the instance. Can be useful for a countvectorizer for example.
     '''
     def get_training_data(self):
-        if self.use_headlines and not self.use_body:
+        if self.use_headlines==1 and not self.use_body==1:
             if self.X_train == []:
                 self.X_train = [element['headline'] for element in self.train]
                 self.y_train = [element['is_sarcastic'] for element in self.train]
-        if self.use_body and not self.use_headlines:
+        if self.use_body==1 and not self.use_headlines==1:
             if self.X_train == []:
                 self.X_train = [element['article_text'] for element in self.train]
                 self.y_train = [element['is_sarcastic'] for element in self.train]
-        if self.use_body and self.use_headlines:
+        if self.use_body==1 and self.use_headlines==1:
             if self.X_train == []:
                 self.X_train = [element['headline'] + " " + element['article_text'] for element in self.train]
                 self.y_train = [element['is_sarcastic'] for element in self.train]
