@@ -47,7 +47,7 @@ class DataLoader:
             if use_body:
                 json_str = ""
                 i = 0
-                for l in enumerate(file.readlines()):
+                for l in file.readlines():
                     i+=1
                     if i<6:
                         json_str += l
