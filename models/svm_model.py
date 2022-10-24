@@ -64,4 +64,4 @@ class SVM_Text_Model(GenericModelInterface):
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
         y_pred = self.predict(X_test)
-        return self.get_accuracy(y_test, y_pred), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred)
+        return self.get_accuracy(y_test, y_pred), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred), auc(y_test, y_pred)

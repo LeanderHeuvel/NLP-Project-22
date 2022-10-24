@@ -1,7 +1,10 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 
-import tensorflow_text as text
+
+from sklearn.metrics import f1_score, auc, precision_score, recall_score
+
+import tensorflow_text as text #dont remove
 from official.nlp import optimization
 from dataloader import DataLoader  # to create AdamW optimizer
 from models.generic_model import GenericModelInterface
@@ -117,7 +120,9 @@ class BertModel(GenericModelInterface):
         self.model.compile(optimizer=optimizer,
                         loss=loss,
                         metrics=metrics)
-        return self.model.evaluate(X_test, y_test)
+        
+        y_pred = self.model.predict(X_test)
+        return self.model.evaluate(X_test, y_test), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred), auc(y_test, y_pred)
     
     def get_model_urls(self, bert_model_name):
         map_name_to_handle = {
