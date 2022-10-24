@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import f1_score, auc, precision_score, recall_score
 
 from dataloader import DataLoader
 from models.generic_model import GenericModelInterface
@@ -63,4 +64,4 @@ class SVM_Text_Model(GenericModelInterface):
     def evaluate(self):
         X_test, y_test = self.dataloader.get_test_data()
         y_pred = self.predict(X_test)
-        return self.get_accuracy(y_test, y_pred)
+        return self.get_accuracy(y_test, y_pred), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred)
