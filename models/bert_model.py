@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
 
-from sklearn.metrics import f1_score, auc, precision_score, recall_score
+from sklearn.metrics import f1_score, roc_curve, precision_score, recall_score
 
 import tensorflow_text as text #dont remove
 from official.nlp import optimization
@@ -123,7 +123,7 @@ class BertModel(GenericModelInterface):
         
         y_pred = self.model.predict(X_test)
         y_pred = np.where(y_pred > 0.5, 1, 0)
-        return self.model.evaluate(X_test, y_test), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred), auc(y_test, y_pred)
+        return self.model.evaluate(X_test, y_test), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred), roc_curve(y_test, y_pred)
     
     def get_model_urls(self, bert_model_name):
         map_name_to_handle = {
