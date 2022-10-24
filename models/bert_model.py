@@ -122,6 +122,7 @@ class BertModel(GenericModelInterface):
                         metrics=metrics)
         
         y_pred = self.model.predict(X_test)
+        y_pred = np.where(y_pred > 0.5, 1, 0)
         return self.model.evaluate(X_test, y_test), f1_score(y_test, y_pred), precision_score(y_test, y_pred), recall_score(y_test, y_pred), auc(y_test, y_pred)
     
     def get_model_urls(self, bert_model_name):
