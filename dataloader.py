@@ -98,7 +98,7 @@ class DataLoader:
                 self.y_train = [element['is_sarcastic'] for element in self.train]
         if self.use_body and self.use_headlines:
             if self.X_train == []:
-                self.X_train = [element['article_text'] + " "+ element['headline'] for element in self.train]
+                self.X_train = [element['headline'] + " " + element['article_text'] for element in self.train]
                 self.y_train = [element['is_sarcastic'] for element in self.train]
         return np.array(self.X_train), np.array(self.y_train)
 
