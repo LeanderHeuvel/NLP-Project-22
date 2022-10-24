@@ -30,7 +30,7 @@ if args.action =="train":
     print("storing model to: "+ args.model_dir)
     model.store_model(args.model_dir)
     if args.model_type == "bert":
-        model.plot_model()
+        # model.plot_model()
         model.plot_training_curve()
 else:
     print("Evaluating... ")
