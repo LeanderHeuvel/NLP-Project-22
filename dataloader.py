@@ -17,7 +17,7 @@ class DataLoader:
     '''
     Load data in python list and lazy load the headlines and labels in seperate list. 
     '''
-    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True, use_headlines = True, use_body = True ) -> None:
+    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True, use_headlines = True, use_body = False ) -> None:
         self.img_dir = img_dir
         self.data = []
         self.headlines = None
@@ -43,6 +43,7 @@ class DataLoader:
     For internal use only, loads the data after instance initialization in Python list
     '''
     def __load_data__(self, use_body):
+        use_body = True
         with open(self.img_dir) as file:
             if use_body:
                 json_str = ""
