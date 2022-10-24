@@ -37,7 +37,7 @@ class DataLoader:
             self.y_val = []
             self.y_train = []
             self.y_test = []
-        self.__load_data__(use_body)
+        self.__load_data__()
         self.__split_data__(train_test_split)
     '''
     For internal use only, loads the data after instance initialization in Python list
