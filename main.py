@@ -16,7 +16,7 @@ parser.add_argument('--use_body', default=True, type=bool, help="whether to trai
 args = parser.parse_args()
 model = None
 
-sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json", use_body=args.use_body, use_headlines=args.use_headlines)
+sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_with_article_text.json", use_body=args.use_body, use_headlines=args.use_headlines)
 epochs = args.epochs
 
 if args.model_type == "bert":
