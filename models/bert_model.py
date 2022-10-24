@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 
+import tensorflow_text as text
 from official.nlp import optimization
 from dataloader import DataLoader  # to create AdamW optimizer
 from models.generic_model import GenericModelInterface
