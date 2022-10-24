@@ -82,7 +82,7 @@ class BertModel(GenericModelInterface):
         X_val, y_val = self.dataloader.get_val_data()
 
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
-        metrics = [tf.metrics.BinaryAccuracy(),tf.keras.metrics.Recall(),tf.keras.metrics.Precision()]
+        metrics = [tf.metrics.BinaryAccuracy(),tf.metrics.Recall(),tf.metrics.Precision()]
         
         steps_per_epoch = X_train.size
         num_train_steps = steps_per_epoch * self.epochs
