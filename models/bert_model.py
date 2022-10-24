@@ -87,7 +87,7 @@ class BertModel(GenericModelInterface):
         steps_per_epoch = X_train.size
         num_train_steps = steps_per_epoch * self.epochs
         num_warmup_steps = int(0.1*num_train_steps)
-        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
+        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
         init_lr = 3e-5
         optimizer = optimization.create_optimizer(init_lr=init_lr,
