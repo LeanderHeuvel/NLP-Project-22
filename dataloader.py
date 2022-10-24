@@ -106,15 +106,33 @@ class DataLoader:
     This method loads the labels, sarcastic yes/no only. The labels are cached in the instance.
     '''
     def get_test_data(self):
-        if self.X_test == []:
-            self.y_test = [element['is_sarcastic'] for element in self.test]
-            self.X_test = [element['headline'] for element in self.test]
+        if self.use_headlines and not self.use_body:
+            if self.X_test == []:
+                self.X_test = [element['headline'] for element in self.test]
+                self.y_test = [element['is_sarcastic'] for element in self.test]
+        if self.use_body and not self.use_headlines:
+            if self.X_test == []:
+                self.X_test = [element['article_text'] for element in self.test]
+                self.y_test = [element['is_sarcastic'] for element in self.test]
+        if self.use_body and self.use_headlines:
+            if self.X_test == []:
+                self.X_test = [element['article_text'] + " "+ element['headline'] for element in self.test]
+                self.y_test = [element['is_sarcastic'] for element in self.test]
         return np.array(self.X_test), np.array(self.y_test)
 
     def get_val_data(self):
-        if self.X_test == []:
-            self.y_val = [element['is_sarcastic'] for element in self.val]
-            self.X_val = [element['headline'] for element in self.val]
+        if self.use_headlines and not self.use_body:
+            if self.X_val == []:
+                self.X_val = [element['headline'] for element in self.val]
+                self.y_val = [element['is_sarcastic'] for element in self.val]
+        if self.use_body and not self.use_headlines:
+            if self.X_val == []:
+                self.X_val = [element['article_text'] for element in self.val]
+                self.y_val = [element['is_sarcastic'] for element in self.val]
+        if self.use_body and self.use_headlines:
+            if self.X_val == []:
+                self.X_val = [element['article_text'] + " "+ element['headline'] for element in self.val]
+                self.y_val = [element['is_sarcastic'] for element in self.val]
         return np.array(self.X_val), np.array(self.y_val)
     
     '''
