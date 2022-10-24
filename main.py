@@ -10,11 +10,13 @@ parser.add_argument('--action', default = "train", help = "train or evaluate", t
 parser.add_argument('--model_dir', default = "checkpoints/sarcastism_ds_bert", help = "directory of model to store or load", type=str)
 parser.add_argument('--epochs', default=50, type=int, help="amount of epochs for training")
 parser.add_argument('--n_gram_range', nargs='+', default = [1,1], type=int, help="n-gram range of the countvectorizer for the SVM model to train on")
+parser.add_argument('--use_headlines', default=False, type=bool, help="whether to train on headlines or not" )
+parser.add_argument('--use_body', default=True, type=bool, help="whether to train on headlines or not" )
 
 args = parser.parse_args()
 model = None
 
-sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json")
+sarcastic_loader = dataloader.DataLoader(img_dir="archive/Sarcasm_Headlines_Dataset_v2.json", use_body=args.use_body, use_headlines=args.use_headlines)
 epochs = args.epochs
 
 if args.model_type == "bert":

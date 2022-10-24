@@ -71,9 +71,7 @@ class BertModel(GenericModelInterface):
             self.model = tf.keras.models.load_model(model_dir)
 
     def store_model(self, model_dir):
-        dataset_name = 'sarcasm_ds2'
-        saved_model_path = './'+model_dir+'{}_bert'.format(dataset_name.replace('/', '_'))
-        self.model.save(saved_model_path, include_optimizer=False)
+        self.model.save(model_dir, include_optimizer=False)
 
     def predict(self, corpus):
         return self.model(tf.constant(corpus))

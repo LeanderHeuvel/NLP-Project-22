@@ -17,7 +17,7 @@ class DataLoader:
     '''
     Load data in python list and lazy load the headlines and labels in seperate list. 
     '''
-    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True ) -> None:
+    def __init__(self, img_dir:str, train_test_val=[0.8,0.2,0.2], train_test_split=True, use_headlines = True, use_body = True ) -> None:
         self.img_dir = img_dir
         self.data = []
         self.headlines = None
@@ -25,6 +25,8 @@ class DataLoader:
         self.index = 0 
         self.random_state = 9283
         self.train_test_val = train_test_val
+        self.use_headlines = use_headlines
+        self.use_body = use_body
         if train_test_split:
             self.train = []
             self.test = []
@@ -35,15 +37,27 @@ class DataLoader:
             self.y_val = []
             self.y_train = []
             self.y_test = []
-        self.__load_data__()
+        self.__load_data__(use_body)
         self.__split_data__(train_test_split)
     '''
     For internal use only, loads the data after instance initialization in Python list
     '''
-    def __load_data__(self):
+    def __load_data__(self, use_body):
         with open(self.img_dir) as file:
-            for idx, line in enumerate(file.readlines()):
-                self.data.append(json.loads(line))
+            if use_body:
+                json_str = ""
+                i = 0
+                for l in enumerate(file.readlines()):
+                    i+=1
+                    if i<6:
+                        json_str += l
+                    if i == 6:
+                        self.data.append(json.loads(json_str+"}"))
+                        json_str = ""
+                        i=0
+            else:
+                for idx, line in enumerate(file.readlines()):
+                    self.data.append(json.loads(line))
 
     def __len__(self):
         return len(self.data)
@@ -73,10 +87,19 @@ class DataLoader:
     '''
     This method loads the headlines only. The headlines are cached in the instance. Can be useful for a countvectorizer for example.
     '''
-    def get_training_data(self):   
-        if self.X_train == []:
-            self.X_train = [element['headline'] for element in self.train]
-            self.y_train = [element['is_sarcastic'] for element in self.train]
+    def get_training_data(self):
+        if self.use_headlines and not self.use_body:
+            if self.X_train == []:
+                self.X_train = [element['headline'] for element in self.train]
+                self.y_train = [element['is_sarcastic'] for element in self.train]
+        if self.use_body and not self.use_headlines:
+            if self.X_train == []:
+                self.X_train = [element['article_text'] for element in self.train]
+                self.y_train = [element['is_sarcastic'] for element in self.train]
+        if self.use_body and self.use_headlines:
+            if self.X_train == []:
+                self.X_train = [element['article_text'] + " "+ element['headline'] for element in self.train]
+                self.y_train = [element['is_sarcastic'] for element in self.train]
         return np.array(self.X_train), np.array(self.y_train)
 
     '''
